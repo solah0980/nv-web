@@ -16,6 +16,7 @@ module.exports = {
 
     async create(req, res) {
         try {
+            console.log(req)
             const user = await User.create(req.body)
             res.send(user.toJSON())
         } catch (err) {
@@ -65,7 +66,7 @@ module.exports = {
 
     async show(req, res) {
         try {
-            const user = await User.findById(req.params.userId)
+            const user = await User.findByPk(req.params.userId)
             res.send(user)
         } catch (error) {
             res.status(500).send({
