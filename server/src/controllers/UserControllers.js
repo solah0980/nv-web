@@ -16,7 +16,6 @@ module.exports = {
 
     async create(req, res) {
         try {
-            console.log(req)
             const user = await User.create(req.body)
             res.send(user.toJSON())
         } catch (err) {

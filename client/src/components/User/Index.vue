@@ -3,12 +3,14 @@
     <h1>Get All User</h1>
     <h4>
       <button v-on:click="navigateTo('/users/create')">Create User</button>
+      <button v-on:click="logout">Logout</button>
     </h4>
     <div v-for="user in users" v-bind:key="user.id">
       <p>{{user.id}}</p>
       <p>{{user.name}}</p>
       <p>{{user.lastname}}</p>
       <p>{{user.email}}</p>
+      <p>{{user.password}}</p>
       <button v-on:click="navigateTo('/user/' + user.id)">ดูข้อมูล</button>
       <button v-on:click="navigateTo('/user/edit/' + user.id)">แก้ไขข้อมูล</button>
       <button v-on:click="deleteUser(user)">ลบข้อมูล</button>
@@ -28,7 +30,6 @@ export default {
   async created() {
     try {
       this.users = (await UserServices.index()).data;
-      console.log(this.users);
     } catch (error) {
       console.log(error);
     }
@@ -57,6 +58,14 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+
+    logout() {
+      this.$store.dispatch("setToken", null);
+      this.$store.dispatch("setUser", null);
+      this.$router.push({
+        name: "login"
+      });
     }
   }
 };

@@ -8,5 +8,8 @@ module.exports = {
             dialect: process.env_DIALECT || 'sqlite',
             storage: './nvwebblog-db.sqlite'
         }
+    },
+    authentication: {
+        jwtSecret: 'korn'
     }
 }

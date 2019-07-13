@@ -48,7 +48,7 @@ export default {
   methods: {
     async createUser() {
       try {
-        await UsersServices.post(this.user);
+        const respons = await UsersServices.post(this.user);
         this.$router.push({
           name: "users"
         });

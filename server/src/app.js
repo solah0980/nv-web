@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({
 }))
 app.use(cors())
 
+require('./userPassport')
 require('./routes')(app)
 
 let port = 8081
