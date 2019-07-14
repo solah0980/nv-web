@@ -9,7 +9,7 @@
         <div class="thumbnail-pic" v-if="blog.thumbnail != null">
           <img :src="BASE_URL+blog.thumbnail" alt="thumbnail" />
         </div>
-      <form action>
+      <form>
         <div class="dropbox">
           <input
             type="file"

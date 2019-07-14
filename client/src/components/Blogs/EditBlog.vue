@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Edit Blog</h1>
-    <form v-on:submit.prevent="editBlog">
+    <form v-on:submit.prevent="editBlog" v-if="blog">
       <p>
         title:
         <input type="text" v-model="blog.title" />
@@ -9,7 +9,7 @@
         <div class="thumbnail-pic" v-if="blog.thumbnail != null">
           <img :src="BASE_URL+blog.thumbnail" alt="thumbnail" />
         </div>
-      <form action>
+      <form>
         <div class="dropbox">
           <input
             type="file"
@@ -78,12 +78,12 @@ export default {
       pictures: [],
       pictureIndex: 0,
       blog: {
-        title: '',
+        title: "",
+        content: "",
+        category: "",
+        pictures: "null",
         thumbnail: null,
-        pictures: 'null',
-        content: '',
-        category: '',
-        status: ''
+        status: "active"
       },
       config: {
         toolbar: [
@@ -181,9 +181,10 @@ export default {
     try {
       let blogId = this.$route.params.blogId;
       this.blog = (await BlogServices.show(blogId)).data;
-      this.blog.blogpictures = JSON.parse(blog.pictures)
-      console.log(blog)
+      this.blog.pictures = JSON.parse(blog.pictures)
+
     } catch (error) {
+      console.log('error ok')
       console.log(error);
     }
   },
