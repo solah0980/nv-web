@@ -15,7 +15,7 @@
           <router-link :to="{name:'login'}">Login</router-link>
         </li>
         <li>
-          <router-link :to="{name:'blogs'}">Blogs</router-link>
+          <a v-on:click="logout">Logout</a>
         </li>
       </ul>
     </div>
@@ -23,7 +23,17 @@
   </div>
 </template>
 <script>
-export default {};
+export default {
+  methods: {
+    logout() {
+      this.$store.dispatch("setToken", null);
+      this.$store.dispatch("setUser", null);
+      this.$router.push({
+        name: "login"
+      });
+    }
+  }
+};
 </script>
 <style scoped>
 .navbar {

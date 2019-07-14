@@ -10,6 +10,8 @@ import BlogCreate from '@/components/Blogs/CreateBlog'
 import BlogEdit from '@/components/Blogs/EditBlog'
 import BlogIndex from '@/components/Blogs/Index'
 import BlogShow from '@/components/Blogs/ShowBlog'
+
+import Upload from '@/components/Utile/Upload'
 Vue.use(Router)
 
 export default new Router({
@@ -50,7 +52,7 @@ export default new Router({
       component: BlogCreate
     },
     {
-      path: '/blog/edit',
+      path: '/blog/edit/:blogId',
       name: 'blog-edit',
       component: BlogEdit
     },
@@ -58,6 +60,11 @@ export default new Router({
       path: '/blog/:blogId',
       name: 'blog-show',
       component: BlogShow
+    },
+    {
+      path: '/upload',
+      name: 'upload',
+      component: Upload
     }
 
   ]

@@ -3,7 +3,6 @@
     <h1>Get All User</h1>
     <h4>
       <button v-on:click="navigateTo('/users/create')">Create User</button>
-      <button v-on:click="logout">Logout</button>
     </h4>
     <div v-for="user in users" v-bind:key="user.id">
       <p>{{user.id}}</p>
@@ -58,14 +57,6 @@ export default {
       } catch (error) {
         console.log(error);
       }
-    },
-
-    logout() {
-      this.$store.dispatch("setToken", null);
-      this.$store.dispatch("setUser", null);
-      this.$router.push({
-        name: "login"
-      });
     }
   }
 };
