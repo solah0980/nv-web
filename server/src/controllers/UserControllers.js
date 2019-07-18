@@ -5,12 +5,37 @@ const {
 module.exports = {
     async index(req, res) {
         try {
-            const users = await User.findAll()
+            let users = null
+            const search = req.query.search
+            console.log('---->search = ' + search)
+
+            if (search) {
+                users = await User.findAll({
+                    where: {
+                        $or: ['name', 'lastname', 'email'].map(key => ({
+                            [key]: {
+                                $like: `%${search}%`
+                            }
+                        }))
+                    },
+                    order: [
+                        ['createdAt', 'DESC']
+                    ]
+                })
+            } else {
+                users = await User.findAll({
+                    order: [
+                        ['createdAt', 'DESC']
+                    ]
+                })
+            }
             res.send(users)
+
         } catch (err) {
             res.status(500).send({
                 err: 'The users infomation was incorrect'
             })
+            console.log(err)
         }
     },
 
@@ -20,7 +45,7 @@ module.exports = {
             res.send(user.toJSON())
         } catch (err) {
             res.status(500).send({
-                err: 'Create user incorrect'
+                err: 'User already in system'
             })
         }
     },
@@ -70,6 +95,28 @@ module.exports = {
         } catch (error) {
             res.status(500).send({
                 error: 'the user show incorrect'
+            })
+        }
+    },
+
+    async getFront(req, res) {
+        try {
+            console.log('Helloo')
+            const users = await User.findAll()
+
+            let listNames = []
+
+            users.forEach(user => {
+                let name = {
+                    "id": user.id,
+                    "name": `${user.name} ${user.lastname}`
+                }
+                listNames.push(name)
+            })
+            res.send(listNames)
+        } catch (error) {
+            res.status(500).send({
+                error: 'The users infomation was incorrect'
             })
         }
     }

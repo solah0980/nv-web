@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <nav-bar />
     <router-view />
   </div>
 </template>
@@ -12,6 +11,10 @@ export default {
 </script>
 
 <style>
+body {
+  margin: 0;
+  padding: 0;
+}
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -19,13 +22,15 @@ export default {
   color: #2c3e50;
 }
 /* Fade transition */
-.fade-enter, .fade-leave-to {
-    opacity: 0;
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
-.fade-enter-active, .fade-leave-active {    
-    transition: opacity 0.3s;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
 }
 .fade-enter-to {
-    opacity: 1;
+  opacity: 1;
 }
 </style>

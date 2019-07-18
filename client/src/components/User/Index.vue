@@ -1,36 +1,71 @@
 <template>
   <div>
-    <h1>Get All User</h1>
-    <h4>
-      <button v-on:click="navigateTo('/users/create')">Create User</button>
-    </h4>
-    <div v-for="user in users" v-bind:key="user.id">
-      <p>{{user.id}}</p>
-      <p>{{user.name}}</p>
-      <p>{{user.lastname}}</p>
-      <p>{{user.email}}</p>
-      <p>{{user.password}}</p>
-      <button v-on:click="navigateTo('/user/' + user.id)">ดูข้อมูล</button>
-      <button v-on:click="navigateTo('/user/edit/' + user.id)">แก้ไขข้อมูล</button>
-      <button v-on:click="deleteUser(user)">ลบข้อมูล</button>
-      <hr />
+    <main-header navsel="back"></main-header>
+    <div class="container" v-if="user.type == 'admin'">
+      <h1>Get All User</h1>
+      <div class="search-user">
+        <form class="form-group">
+          <div class="row">
+            <div class="col-10">
+              <input type="text" class="form-control" v-model="search" />
+            </div>
+            <div class="con-2 pt-2">
+              <i class="fas fa-search"></i>
+            </div>
+          </div>
+        </form>
+      </div>
+      <h4>
+        <button class="btn btn-success" v-on:click="navigateTo('/users/create')">Create User</button>
+      </h4>
+      <div v-for="user in users" v-bind:key="user.id" class="main">
+        <p>id: {{user.id}}</p>
+        <p>name: {{user.name}}</p>
+        <p>lastname: {{user.lastname}}</p>
+        <p>email: {{user.email}}</p>
+        <p>password: {{user.password}}</p>
+        <button v-on:click="navigateTo('/user/' + user.id)" class="btn btn-info">View User</button>
+        <button v-on:click="navigateTo('/user/edit/' + user.id)" class="btn btn-warning">Edit User</button>
+        <button v-on:click="deleteUser(user)" class="btn btn-danger">Delete</button>
+      </div>
     </div>
+    <h1 v-else class="text-danger text-center mt-5">คุณไม่มีสิทธิ์เข้าถึง</h1>
   </div>
 </template>
 <script>
 import UserServices from "@/services/UsersServices";
+import { mapState } from "vuex";
+import _ from "lodash";
 export default {
   data() {
     return {
-      users: []
+      users: [],
+      search: ""
     };
   },
 
-  async created() {
-    try {
-      this.users = (await UserServices.index()).data;
-    } catch (error) {
-      console.log(error);
+  watch: {
+    search: _.debounce(async function() {
+      const route = {
+        name: "users"
+      };
+      if (this.search !== "") {
+        route.query = {
+          search: this.search
+        };
+      }
+      console.log("search = " + this.search);
+      this.$router.push(route);
+    }, 700),
+
+    "$route.query.search": {
+      immediate: true,
+      async handler(value) {
+        this.users = (await UserServices.index(value)).data;
+        console.log(this.users);
+        console.log("aaa");
+        this.search = value;
+      }
     }
   },
 
@@ -58,8 +93,19 @@ export default {
         console.log(error);
       }
     }
+  },
+  computed: {
+    ...mapState(["user"])
   }
 };
 </script>
 <style scoped>
+.main {
+  margin-top: 10px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+  padding: 10px;
+}
+.search-user {
+  width: 250px;
+}
 </style>

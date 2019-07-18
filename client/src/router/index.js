@@ -11,6 +11,9 @@ import BlogEdit from '@/components/Blogs/EditBlog'
 import BlogIndex from '@/components/Blogs/Index'
 import BlogShow from '@/components/Blogs/ShowBlog'
 
+import FrontIndex from '@/components/Fronts/Index'
+import FrontShow from '@/components/Fronts/ShowBlog'
+
 import Upload from '@/components/Utile/Upload'
 Vue.use(Router)
 
@@ -65,7 +68,16 @@ export default new Router({
       path: '/upload',
       name: 'upload',
       component: Upload
+    },
+    {
+      path: '/',
+      name: 'front',
+      component: FrontIndex
+    },
+    {
+      path: '/front/:blogId',
+      name: 'front-show',
+      component: FrontShow
     }
-
   ]
 })

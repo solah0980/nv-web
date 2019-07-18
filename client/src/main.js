@@ -7,11 +7,10 @@ import {
   sync
 } from 'vuex-router-sync'
 import store from './store'
-import navheader from '@/components/Header'
+import Header from '@/components/Header'
 
 sync(store, router)
-Vue.component('nav-bar', navheader)
-
+Vue.component('main-header', Header)
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

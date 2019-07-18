@@ -1,61 +1,64 @@
 <template>
   <div>
-    <h1>Edit Blog</h1>
-    <form v-on:submit.prevent="editBlog" v-if="blog">
-      <p>
-        title:
-        <input type="text" v-model="blog.title" />
-      </p>
+    <main-header navsel="back"></main-header>
+    <div class="container">
+      <h1>Edit Blog</h1>
+      <form v-on:submit.prevent="EditBlog">
+        <p>
+          title:
+          <input type="text" v-model="blog.title" />
+        </p>
         <div class="thumbnail-pic" v-if="blog.thumbnail != null">
           <img :src="BASE_URL+blog.thumbnail" alt="thumbnail" />
         </div>
-      <form>
-        <div class="dropbox">
-          <input
-            type="file"
-            multiple
-            :name="uploadFieldName"
-            :disabled="isSaving"
-            @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
-            accept="image/*"
-            class="input-file"
-          />
-          <p v-if="isInital">
-            Drag your file(s) here to begin
-            <br />on click to browse
-          </p>
-          <p v-if="isSaving">Uploading {{fileCount}} file...</p>
-          <p v-if="isSuccess">Upload Successful.</p>
+        <form>
+          <div class="dropbox">
+            <input
+              type="file"
+              multiple
+              :name="uploadFieldName"
+              :disabled="isSaving"
+              @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
+              accept="image/*"
+              class="input-file"
+            />
+            <p v-if="isInital">
+              Drag your file(s) here to begin
+              <br />on click to browse
+            </p>
+            <p v-if="isSaving">Uploading {{fileCount}} file...</p>
+            <p v-if="isSuccess">Upload Successful.</p>
+          </div>
+        </form>
+        <div>
+          <transition-group tag="ul" name="fade" class="pictures">
+            <li v-for="picture in pictures" v-bind:key="picture.id">
+              <img :src="BASE_URL + picture.name" style="margin-bottom:5px;" alt="picture image" />
+              <br />
+              <button v-on:click.prevent="deletePhoto(picture)">Delete</button>
+              <button v-on:click.prevent="thumbnail(picture.name)">Thumbnail</button>
+            </li>
+          </transition-group>
         </div>
+        <div class="clearfix"></div>
+        <p>content:</p>
+        <p>
+          <vue-ckeditor
+            v-model.lazy="blog.content"
+            :config="config"
+            @blur="onBlur($event)"
+            @focus="onFocus($event)"
+          />
+        </p>
+        <p>
+          category:
+          <input type="text" v-model="blog.category" />
+        </p>
+        <p>
+          <input type="submit" value="Create blog" class="btn btn-success" />
+        </p>
       </form>
-      <div>
-        <transition-group tag="ul" name="fade" class="pictures">
-          <li v-for="picture in pictures" v-bind:key="picture.id">
-            <img :src="BASE_URL + picture.name" style="margin-bottom:5px;" alt="picture image" />
-            <br />
-            <button v-on:click.prevent="deletePhoto(picture)">Delete</button>
-            <button v-on:click.prevent="setThumbnail(picture.name)">Thumbnail</button>
-          </li>
-        </transition-group>
-      </div>
-      <div class="clearfix"></div>
-      <p>content:</p>
-      <p>
-        <vue-ckeditor
-          v-model.lazy="blog.content"
-          :config="config"
-          @blur="onBlur($event)"
-          @focus="onFocus($event)"
-        />
-      </p>
-      <p>
-        category:
-        <input type="text" v-model="blog.category" />
-      </p>
-      <p>
-        <input type="submit" value="EditBlog" />
-      </p>
-    </form>
+    </div>
   </div>
 </template>
 <script>
@@ -94,24 +97,29 @@ export default {
     };
   },
   methods: {
-    //Edit Blog
-    async editBlog() {
-      this.blog.pictures = JSON.stringify(blog.pictures)
+    async EditBlog() {
+      this.blog.pictures = JSON.stringify(this.blog.pictures);
       try {
         await BlogServices.put(this.blog);
-        console.log(ok);
+        this.$router.push({
+          name: "blogs"
+        });
       } catch (error) {
         console.log(error);
       }
     },
-    //Ckeditor
+    //method ckeditor
     onBlur(editor) {
       console.log(editor);
     },
     onFocus(editor) {
       console.log(editor);
     },
-    //upload photo
+    navigateTo(route) {
+      console.log(route);
+      this.$router.push(route);
+    },
+    //method upload photo
     navigateTo(route) {
       console.log(route);
       this.$router.push(route);
@@ -132,6 +140,7 @@ export default {
         this.currentStatus = STATUS_SAVING;
         await UploadServices.upload(formData);
         this.currentStatus = STATUS_SUCCESS;
+
         //upload image uploaded display
         this.uploadedFileNames.forEach(uploadFilename => {
           let found = false;
@@ -169,42 +178,53 @@ export default {
     clearUploadResult() {
       setTimeout(() => this.reset(), 5000);
     },
-    //set thumbnail
-    setThumbnail(filename){
-      this.blog.thumbnail = filename
+
+    //delete photo
+    async deletePhoto(material) {
+      let result = confirm("want to delete this photo");
+      if (result) {
+        let dataJSON = {
+          filename: material.name
+        };
+        try {
+          await UploadServices.delete(dataJSON);
+
+          for (let i = 0; i < this.pictures.length; i++) {
+            if (this.pictures[i].id === material.id) {
+              this.pictures.splice(i, 1);
+              this.pictureIndex--;
+              break;
+            }
+          }
+          console.log(this.pictures);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    },
+
+    thumbnail(filename) {
+      this.blog.thumbnail = filename;
     }
   },
-  components: {
-    VueCkeditor
-  },
-  async mounted(){
+  async mounted() {
     try {
       let blogId = this.$route.params.blogId;
       this.blog = (await BlogServices.show(blogId)).data;
-      this.blog.pictures = JSON.parse(blog.pictures)
-
+      this.pictures = JSON.parse(this.blog.pictures);
+      console.log(this.pictures);
     } catch (error) {
-      console.log('error ok')
       console.log(error);
     }
   },
-  computed: {
-    isInital() {
-      return this.currentStatus === STATUS_INITIAL;
-    },
-    isSaving() {
-      return this.currentStatus === STATUS_SAVING;
-    },
-    isSuccess() {
-      return this.currentStatus === STATUS_SUCCESS;
-    },
-    isFailed() {
-      return this.currentStatus === STATUS_FAILED;
-    }
+
+  components: {
+    VueCkeditor
   },
-   async created() {
-     this.reset()
-     this.config.toolbar = [
+
+  created() {
+    this.reset();
+    this.config.toolbar = [
       {
         name: "document",
         items: [
@@ -308,9 +328,26 @@ export default {
       { name: "about", items: ["About"] }
     ];
   },
+  computed: {
+    isInital() {
+      return this.currentStatus === STATUS_INITIAL;
+    },
+    isSaving() {
+      return this.currentStatus === STATUS_SAVING;
+    },
+    isSuccess() {
+      return this.currentStatus === STATUS_SUCCESS;
+    },
+    isFailed() {
+      return this.currentStatus === STATUS_FAILED;
+    }
+  }
 };
 </script>
 <style scoped>
+.container {
+  padding-top: 40px;
+}
 .clearfix {
   clear: both;
 }
