@@ -20,6 +20,9 @@ export default {
   },
   delete(user) {
     return Api().delete('user/' + user.id)
+  },
+  getFront() {
+    return Api().get('users/front', )
   }
 
 }

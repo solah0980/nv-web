@@ -10,9 +10,10 @@ module.exports = {
                 where: {
                     blogId: req.params.blogId
                 },
-                order: [['updatedAt','DESC']]
+                order: [
+                    ['updatedAt', 'DESC']
+                ]
             })
-            console.log(comment)
             res.send(comment)
         } catch (error) {
             res.status(500).send({

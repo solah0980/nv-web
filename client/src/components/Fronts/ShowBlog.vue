@@ -27,7 +27,7 @@
         </div>
       </div>
     </div>
-    <comment v-if="blog" :blogid="blog.id" :userid="user"></comment>
+    <comment v-if="blog" :blogid="blog.id" :user="user"></comment>
   </div>
 </template>
 <script>

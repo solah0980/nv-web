@@ -7,7 +7,8 @@ module.exports = {
         option: {
             dialect: process.env_DIALECT || 'sqlite',
             storage: './nvwebblog-db.sqlite'
-        }
+            // host: process.env.HOST || 'localhost'
+        },
     },
     authentication: {
         jwtSecret: 'korn'

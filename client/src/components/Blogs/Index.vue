@@ -57,7 +57,7 @@
               </p>
               <p>
                 <strong>create</strong>
-                {{blog.createdAt}}
+                {{blog.createdAt | formatedDate}}
               </p>
               <p>
                 <button class="btn btn-info" v-on:click="NavigateTo('/blog/'+blog.id)">
@@ -69,6 +69,14 @@
                 <button class="btn btn-danger" v-on:click="deleteBlog(blog)">
                   <i class="fas fa-trash-alt"></i> Delete Blog
                 </button>
+              </p>
+              <p>
+                <a href="#" class="btn btn-danger btn-sm" v-on:click.prevent="suspend(blog.id)">
+                  <i class="fas fa-ban"></i> Suspend
+                </a>
+                <a href="#" class="btn btn-success btn-sm" v-on:click.prevent="publish(blog.id)">
+                  <i class="far fa-pause-circle"></i> Publish
+                </a>
               </p>
             </div>
             <div class="clear-fix"></div>
@@ -89,6 +97,8 @@
 import BlogServices from "@/services/BlogServices";
 import _ from "lodash";
 import ScrollMonitor from "scrollmonitor";
+import moment from "moment";
+import { mapState } from "vuex";
 let LOAD_NUM = 3;
 let pageWatcher;
 export default {
@@ -119,7 +129,6 @@ export default {
     "$route.query.search": {
       immediate: true,
       async handler(value) {
-        console.log(value);
         this.blogs = [];
         this.result = [];
         this.result = (await BlogServices.index(value)).data;
@@ -180,6 +189,43 @@ export default {
     },
     clearCategory() {
       this.search = "";
+    },
+    async suspend(blogId) {
+      let blog = {
+        id: blogId,
+        status: "suspend"
+      };
+      try {
+        await BlogServices.put(blog);
+        this.restart();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async publish(blogId) {
+      let blog = {
+        id: blogId,
+        status: "published"
+      };
+      try {
+        await BlogServices.put(blog);
+        this.restart();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  },
+  mounted() {
+    if (!this.isUserLoggedIn) {
+      this.$router.push({
+        name: "login"
+      });
+    }
+  },
+  filters: {
+    formatedDate(value) {
+      return moment(String(value)).format("DD-MM-YYYY");
     }
   },
 
@@ -194,6 +240,10 @@ export default {
     let sens = document.querySelector("#blog-list-bottom");
     pageWatcher = ScrollMonitor.create(sens);
     pageWatcher.enterViewport(this.appendResults);
+  },
+
+  computed: {
+    ...mapState(["isUserLoggedIn", "user"])
   }
 };
 </script>

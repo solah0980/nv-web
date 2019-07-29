@@ -24,9 +24,22 @@
         <p>lastname: {{user.lastname}}</p>
         <p>email: {{user.email}}</p>
         <p>password: {{user.password}}</p>
+        <p>
+          status:
+          <span v-if="user.status == 'pause'" class="text-danger">{{user.status}}</span>
+          <span v-else class="text-success">{{user.status}}</span>
+        </p>
         <button v-on:click="navigateTo('/user/' + user.id)" class="btn btn-info">View User</button>
         <button v-on:click="navigateTo('/user/edit/' + user.id)" class="btn btn-warning">Edit User</button>
         <button v-on:click="deleteUser(user)" class="btn btn-danger">Delete</button>
+        <p class="mt-3">
+          <a href="#" class="btn btn-danger btn-sm" v-on:click.prevent="pauseUser(user.id)">
+            <i class="fas fa-ban"></i> Pause
+          </a>&nbsp;
+          <a href="#" class="btn btn-success btn-sm" v-on:click.prevent="activeUser(user.id)">
+            <i class="far fa-pause-circle"></i> Active
+          </a>&nbsp;
+        </p>
       </div>
     </div>
     <h1 v-else class="text-danger text-center mt-5">คุณไม่มีสิทธิ์เข้าถึง</h1>
@@ -83,6 +96,31 @@ export default {
         } catch (error) {
           console.log(error);
         }
+      }
+    },
+    async pauseUser(userId) {
+      let user = {
+        id: userId,
+        status: "pause"
+      };
+      try {
+        await UserServices.put(user);
+        this.refresh();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async activeUser(userId) {
+      let user = {
+        id: userId,
+        status: "active"
+      };
+      try {
+        await UserServices.put(user);
+        this.refresh();
+      } catch (error) {
+        console.log(error);
       }
     },
 

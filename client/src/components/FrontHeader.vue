@@ -27,12 +27,17 @@
                 <i class="fas fa-home"></i> Home
               </router-link>
             </li>
+            <li role="presentstation" class="nav-item">
+              <router-link class="nav-link" :to="{name: 'shop'}">
+                <i class="fas fa-store"></i> BookShop
+              </router-link>
+            </li>
             <li v-if="!isUserLoggedIn" role="presentstation" class="nav-item pt-2">
               <a v-on:click.prevent="showlogin = true" href="#">Login</a>
             </li>
             <transition name="fade">
               <li v-if="isUserLoggedIn" role="presentstation" class="nav-item pt-2">
-                <router-link v-bind:to="{name: 'login'}">
+                <router-link v-bind:to="{name: 'cartlistClient'}">
                   <i class="fas fa-user"></i>
                   {{user.name}}
                 </router-link>
@@ -227,7 +232,7 @@ nav {
   padding: 0.6rem 1rem 0 1rem;
 }
 a.router-link-active {
-  color: yellowgreen !important;
+  color: yellowgreen;
 }
 .navbar {
   background-color: #51415f;

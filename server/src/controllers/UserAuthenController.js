@@ -91,7 +91,11 @@ module.exports = {
                     error: 'User/Password not correct '
                 })
             }
-
+            if (user.status == "pause") {
+                return res.status(403).send({
+                    error: 'Your account suspend'
+                })
+            }
             const userJSON = user.toJSON()
             res.send({
                 user: userJSON,

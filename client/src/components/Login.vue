@@ -39,6 +39,7 @@
 </template>
 <script>
 import AuthenService from "@/services/AuthenServices";
+import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -65,6 +66,22 @@ export default {
         this.error = error.response.data.error;
         this.email = "";
         this.password = "";
+      }
+    }
+  },
+  computed: {
+    ...mapState(["isUserLoggedIn", "user"])
+  },
+  mounted() {
+    if (this.isUserLoggedIn) {
+      if (this.user.type === "admin") {
+        this.$router.push({
+          name: "blogs"
+        });
+      } else {
+        this.$router.push({
+          name: "/"
+        });
       }
     }
   }

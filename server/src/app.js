@@ -16,7 +16,7 @@ app.use('/assets', express.static('public'))
 require('./userPassport')
 require('./routes')(app)
 
-let port = 8081
+let port = Process.env.PORT || 8081
 
 sequelize.sync({
     force: false

@@ -9,7 +9,6 @@
       </div>
       <div class="clearfix"></div>
       <div class="blog-header">
-        <h2>Management Blog</h2>
         <div class="search">
           <form class="form-group">
             <div class="row">
@@ -60,7 +59,7 @@
               </p>
               <p>
                 <strong>create</strong>
-                {{blog.createdAt}}
+                {{blog.createdAt | formatedDate}}
               </p>
               <p>
                 <button class="btn btn-info" v-on:click="NavigateTo('/front/'+blog.id)">
@@ -86,6 +85,7 @@
 import BlogServices from "@/services/BlogServices";
 import _ from "lodash";
 import ScrollMonitor from "scrollmonitor";
+import moment from "moment";
 let LOAD_NUM = 3;
 let pageWatcher;
 export default {
@@ -118,7 +118,7 @@ export default {
       async handler(value) {
         this.blogs = [];
         this.result = [];
-        this.result = (await BlogServices.index(value)).data;
+        this.result = (await BlogServices.frontIndex(value)).data;
         this.appendResults();
         console.log(this.blogs);
         console.log(this.result);
@@ -168,6 +168,11 @@ export default {
     },
     clearCategory() {
       this.search = "";
+    }
+  },
+  filters: {
+    formatedDate(value) {
+      return moment(String(value)).format("DD-MM-YYYY");
     }
   },
 

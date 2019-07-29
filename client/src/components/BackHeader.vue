@@ -28,10 +28,13 @@
             <router-link class="nav-link" :to="{name: 'users'}">Users</router-link>
           </li>
           <li role="presentstation" class="nav-item">
-            <router-link class="nav-link" :to="{name: 'blogs'}">Comments</router-link>
+            <router-link class="nav-link" :to="{name: 'books'}">Books</router-link>
           </li>
-          <li role="presentstation" class="nav-item">
+          <li role="presentstation" class="nav-item" v-if="!isUserLoggedIn">
             <router-link class="nav-link" :to="{name: 'login'}">Login</router-link>
+          </li>
+          <li role="presentstation" class="nav-item" v-if="isUserLoggedIn">
+            <router-link class="nav-link" :to="{name: 'cartlistBack'}">{{user.name}}</router-link>
           </li>
           <li role="presentstation" class="nav-item">
             <a class="nav-link" v-on:click.prevent="logout">Logout</a>
@@ -42,6 +45,7 @@
   </nav>
 </template>
 <script>
+import { mapState } from "vuex";
 export default {
   methods: {
     logout() {
@@ -51,6 +55,9 @@ export default {
         name: "login"
       });
     }
+  },
+  computed: {
+    ...mapState(["user", "isUserLoggedIn"])
   }
 };
 </script>

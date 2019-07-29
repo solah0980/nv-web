@@ -1,7 +1,8 @@
 const {
     User
 } = require('../models')
-
+const Promise = require('bluebird')
+const bcrypt = Promise.promisifyAll(require('bcrypt-nodejs'))
 module.exports = {
     async index(req, res) {
         try {
@@ -41,6 +42,9 @@ module.exports = {
 
     async create(req, res) {
         try {
+            if (req.body.password) {
+                req.body.password = bcrypt.hashSync(req.body.password)
+            }
             const user = await User.create(req.body)
             res.send(user.toJSON())
         } catch (err) {
@@ -52,6 +56,10 @@ module.exports = {
 
     async put(req, res) {
         try {
+            if (req.body.password) {
+                req.body.password = bcrypt.hashSync(req.body.password)
+            }
+
             await User.update(req.body, {
                 where: {
                     id: req.params.userId
@@ -62,6 +70,7 @@ module.exports = {
             res.status(500).send({
                 err: 'update user incorrect'
             })
+            console.log(err)
         }
     },
 
@@ -101,9 +110,8 @@ module.exports = {
 
     async getFront(req, res) {
         try {
-            console.log('Helloo')
+            console.log('hello')
             const users = await User.findAll()
-
             let listNames = []
 
             users.forEach(user => {
@@ -119,6 +127,7 @@ module.exports = {
                 error: 'The users infomation was incorrect'
             })
         }
-    }
+    },
+
 
 }
